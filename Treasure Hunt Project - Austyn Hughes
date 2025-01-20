@@ -1,0 +1,78 @@
+import random
+
+# Create a square grid of given size. 
+def create_grid(size):
+    return [["." for _ in range(size)] for _ in range(size)]
+
+# Print the grid showing the player's position. 
+def print_grid(grid, player_pos):
+    for i in range(len(grid)):
+        for j in range(len(grid[i])):
+            if (i, j) == player_pos:
+                print("P", end=" ")
+            else:
+                print(grid[i][j], end=" ")
+        print()
+
+# Generate a random position within the grid. 
+def random_position(size):
+    return (random.randint(0, size - 1), random.randint(0, size - 1))
+
+# Calculate Manhatten distance between two positions. 
+def calculate_distance(pos1, pos2):
+    return abs(pos1[0] - pos2[0]) + abs(pos1[1] - pos2[1])
+
+# Move the player in the specified direction if possible. 
+def move_player(player_pos, direction, size):
+    x, y = player_pos
+    if direction == "up" and x > 0:
+        return (x - 1, y)
+    elif direction == "down" and x < size - 1:
+        return (x + 1, y)
+    elif direction == "left" and y > 0:
+        return (x, y - 1)
+    elif direction == "right" and y < size - 1:
+        return (x, y + 1)
+    else:
+        print("Invalid move. You're at the edge of the grid.")
+        return player_pos
+
+# Main function to play the treasure hunt game. 
+def play_game():
+    size = 4  # You can change the grid size
+    grid = create_grid(size)
+    
+    player_pos = random_position(size)
+    treasure_pos = random_position(size)
+    while player_pos == treasure_pos:
+        treasure_pos = random_position(size)
+
+    moves = 0
+    hints_used = 0
+
+    print("Welcome to the Treasure Hunt Game!")
+    while True:
+        print_grid(grid, player_pos)
+        print("\nEnter 'up', 'down', 'left', 'right' to move, 'hint' for a hint, or 'exit' to quit.")
+        command = input("Your move: ").strip().lower()
+
+        if command in ["up", "down", "left", "right"]:
+            player_pos = move_player(player_pos, command, size)
+            moves += 1
+            if player_pos == treasure_pos:
+                print("Congratulations! You found the treasure!")
+                print(f"Total moves: {moves}, Hints used: {hints_used}")
+                break
+        elif command == "hint":
+            hints_used += 1
+            distance = calculate_distance(player_pos, treasure_pos)
+            print(f"Hint: The treasure is {distance} moves away.")
+        elif command == "exit":
+            print("Thanks for playing! Goodbye!")
+            break
+        else:
+            print("Invalid command. Try again.")
+
+# Run the game
+if __name__ == "__main__":
+    play_game()
